@@ -1,20 +1,15 @@
-import os
+# main.py
 from fastapi import FastAPI
-from routers import usuarios, becas
+from routers import becas, usuarios, reportes  # 👈 Asegúrate que "reportes" está aquí
 
-app = FastAPI(title="NutriFOX Backend")
+app = FastAPI()
 
-# Rutas
-app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuarios"])
-app.include_router(becas.router, prefix="/becas", tags=["Becas"])
+# ✅ Registrar todos los routers
+app.include_router(becas.router)
+app.include_router(usuarios.router)
+app.include_router(reportes.router)  # 👈 Este habilita /reporte/pdf
 
+# (Opcional) Ruta raíz para verificar que el backend funciona
 @app.get("/")
 def read_root():
-    return {"message": "NutriFOX Backend activo 🚀"}
-
-# Solo si ejecutas localmente: uvicorn main:app --reload
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.getenv("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
-
+    return {"message": "NutriFOX backend activo"}
