@@ -1,7 +1,7 @@
 import os
+import json
 import firebase_admin
 from firebase_admin import credentials, firestore
-import json
 
 # 🔥 Leer credenciales desde variable de entorno
 cred_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
