@@ -1,18 +1,15 @@
+# utils/pdf_generator.py
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from datetime import datetime
 from collections import defaultdict
+import io
 import os
 
-def generar_pdf(datos):
-    folder = "reportes"
-    os.makedirs(folder, exist_ok=True)
-    timestamp = int(datetime.now().timestamp())
-    filename = f"reporte_becas_{timestamp}.pdf"
-    filepath = os.path.join(folder, filename)
-
-    c = canvas.Canvas(filepath, pagesize=A4)
+def generar_pdf_reporte(datos):
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
     def header_page():
@@ -25,7 +22,6 @@ def generar_pdf(datos):
 
         c.setFont("Helvetica-Bold", 16)
         c.drawCentredString(width / 2, height - 50, "Reporte Semanal de Becas")
-
         c.setFont("Helvetica", 10)
         c.drawRightString(width - 40, height - 70, f"Generado el {datetime.now().strftime('%d/%m/%Y %H:%M')}")
 
@@ -86,7 +82,6 @@ def generar_pdf(datos):
         total_global += len(items)
         y -= 10
 
-    # Conteo total
     if y < 100:
         c.showPage()
         y = height - 120
@@ -96,14 +91,13 @@ def generar_pdf(datos):
     c.drawCentredString(width / 2, y, f"✅ Total de becas registradas esta semana: {total_global}")
     y -= 40
 
-    # Firma
     c.setFont("Helvetica", 10)
     c.drawString(60, y, "Atentamente,")
     c.setFont("Helvetica-Bold", 12)
     c.drawString(60, y - 16, "Cafetería NutriFOX")
-
-    c.line(60, y - 30, 250, y - 30)  # Línea de firma
+    c.line(60, y - 30, 250, y - 30)
     c.drawString(60, y - 45, "Firma responsable")
 
     c.save()
-    return filepath
+    buffer.seek(0)
+    return buffer.read()  # 👈 Esto devuelve los bytes del PDF
