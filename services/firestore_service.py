@@ -3,15 +3,16 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# 🔐 Leer credenciales desde variable de entorno
-cred_json = os.environ.get("FIREBASE_CREDENTIALS_JSON")
+# Leer JSON desde variable de entorno
+cred_json_str = os.getenv("FIREBASE_CREDENTIALS_JSON")
 
-if not cred_json:
+if not cred_json_str:
     raise ValueError("❌ No se encontró la variable de entorno FIREBASE_CREDENTIALS_JSON")
 
-cred_dict = json.loads(cred_json)
+# Convertir el string a un diccionario
+cred_dict = json.loads(cred_json_str)
 
-# ✅ Inicializar Firebase sólo si no está ya activo
+# Inicializar Firebase
 if not firebase_admin._apps:
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
